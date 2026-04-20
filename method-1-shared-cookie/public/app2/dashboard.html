@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>App 2 - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a3d62; color: #fff; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { color: #78e08f; }
+        .badge { background: #78e08f; color: #000; padding: 6px 16px; border-radius: 20px; font-size: 13px; }
+        .card { background: #0c2461; padding: 24px; border-radius: 12px; margin-bottom: 20px; }
+        .success-banner { background: #27ae60; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 18px; }
+        .user-info { font-size: 18px; margin-bottom: 8px; }
+        .label { color: #888; font-size: 13px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; margin-right: 10px; }
+        .btn-primary { background: #0f3460; color: white; }
+        .btn-danger { background: #e94560; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📱 App 2 Dashboard</h1>
+        <span class="badge">SSO via Shared Cookie ✅</span>
+    </div>
+
+    <div class="success-banner">
+        🎉 You were automatically logged in via SSO!
+    </div>
+
+    <div class="card">
+        <div class="label">Logged in as (from shared cookie):</div>
+        <div class="user-info" id="userName">Loading...</div>
+        <div class="label" id="userEmail"></div>
+    </div>
+
+    <div class="card">
+        <button class="btn btn-primary" onclick="window.location.href='http://localhost:3001/dashboard'">
+            ← Back to App 1
+        </button>
+        <button class="btn btn-danger" onclick="logout()">
+            🚪 Logout
+        </button>
+    </div>
+
+    <script>
+        async function loadUser() {
+            try {
+                const res = await fetch('/api/me');
+                const data = await res.json();
+                document.getElementById('userName').textContent = data.user.name;
+                document.getElementById('userEmail').textContent = data.user.email;
+            } catch {
+                document.querySelector('.success-banner').textContent = '❌ SSO Failed - No valid cookie found';
+                document.querySelector('.success-banner').style.background = '#e74c3c';
+            }
+        }
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = 'http://localhost:3001';
+        }
+        loadUser();
+    </script>
+</body>
+</html>

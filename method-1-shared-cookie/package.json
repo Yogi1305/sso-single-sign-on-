@@ -1,0 +1,18 @@
+{
+  "name": "method-1-shared-cookie",
+  "version": "1.0.0",
+  "description": "SSO via shared domain cookies",
+  "scripts": {
+    "start:app1": "node server-app1.js",
+    "start:app2": "node server-app2.js",
+    "start": "concurrently \"npm run start:app1\" \"npm run start:app2\""
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.6"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

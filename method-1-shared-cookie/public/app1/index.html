@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App 1 - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: #16213e; padding: 40px; border-radius: 12px; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        h1 { text-align: center; margin-bottom: 8px; color: #e94560; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; font-size: 14px; }
+        .badge { background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        input { width: 100%; padding: 12px 16px; margin-bottom: 16px; border: 1px solid #333; border-radius: 8px; background: #0f3460; color: #fff; font-size: 14px; }
+        input::placeholder { color: #666; }
+        button { width: 100%; padding: 12px; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #c73652; }
+        .error { background: #ff4444; color: white; padding: 10px; border-radius: 8px; margin-bottom: 16px; display: none; font-size: 14px; }
+        .info { background: #0f3460; padding: 16px; border-radius: 8px; margin-top: 20px; font-size: 13px; color: #aaa; }
+        .info code { color: #e94560; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 App 1</h1>
+        <p class="subtitle">Method 1: Shared Domain Cookie <span class="badge">Frontend</span></p>
+
+        <div class="error" id="error"></div>
+
+        <input type="email" id="email" placeholder="Email" value="user@test.com">
+        <input type="password" id="password" placeholder="Password" value="password123">
+        <button onclick="login()">Login</button>
+
+        <div class="info">
+            <strong>Test Credentials:</strong><br>
+            Email: <code>user@test.com</code><br>
+            Password: <code>password123</code><br><br>
+            <strong>How it works:</strong><br>
+            Cookie is set on <code>localhost</code>,
+            making it available across localhost ports.
+        </div>
+    </div>
+
+    <script>
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('error');
+
+            try {
+                const response = await fetch('http://localhost:3001/api/login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const rawBody = await response.text();
+                let data = {};
+
+                if (rawBody) {
+                    try {
+                        data = JSON.parse(rawBody);
+                    } catch (parseErr) {
+                        throw new Error('Server returned a non-JSON response');
+                    }
+                }
+
+                if (!response.ok) {
+                    errorEl.textContent = data.error || `Login failed (${response.status})`;
+                    errorEl.style.display = 'block';
+                    return;
+                }
+
+                window.location.href = 'http://localhost:3001/dashboard';
+            } catch (err) {
+                errorEl.textContent = 'Login failed: ' + err.message;
+                errorEl.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>App 1 - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #fff; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { color: #e94560; }
+        .badge { background: #e94560; padding: 6px 16px; border-radius: 20px; font-size: 13px; }
+        .card { background: #16213e; padding: 24px; border-radius: 12px; margin-bottom: 20px; }
+        .user-info { font-size: 18px; margin-bottom: 8px; }
+        .label { color: #888; font-size: 13px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; margin-right: 10px; transition: 0.3s; }
+        .btn-primary { background: #0f3460; color: white; }
+        .btn-primary:hover { background: #1a5276; }
+        .btn-danger { background: #e94560; color: white; }
+        .btn-danger:hover { background: #c73652; }
+        .btn-success { background: #2ecc71; color: white; }
+        .btn-success:hover { background: #27ae60; }
+        .cookie-display { background: #0a0a23; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; word-break: break-all; color: #e94560; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📱 App 1 Dashboard</h1>
+        <span class="badge">Method 1: Shared Cookie</span>
+    </div>
+
+    <div class="card">
+        <div class="label">Logged in as:</div>
+        <div class="user-info" id="userName">Loading...</div>
+        <div class="label" id="userEmail"></div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 16px;">🔗 Cross-Platform Navigation</h3>
+        <button class="btn btn-success" onclick="goToApp2()">
+            🚀 Go to App 2 (SSO Test)
+        </button>
+        <button class="btn btn-danger" onclick="logout()">
+            🚪 Logout (All Apps)
+        </button>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 10px;">🍪 Current Cookie</h3>
+        <div class="label">This cookie is set on <strong>localhost</strong>:</div>
+        <div class="cookie-display" id="cookieDisplay"></div>
+    </div>
+
+    <script>
+        async function loadUser() {
+            try {
+                const res = await fetch('/api/me');
+                const data = await res.json();
+                document.getElementById('userName').textContent = data.user.name;
+                document.getElementById('userEmail').textContent = data.user.email;
+            } catch (err) {
+                window.location.href = '/';
+            }
+        }
+
+        function goToApp2() {
+            // Simply navigate - cookie will be sent automatically!
+            window.location.href = 'http://localhost:3002';
+        }
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/';
+        }
+
+        // Display cookie
+        document.getElementById('cookieDisplay').textContent = document.cookie || 'No cookies (httpOnly)';
+
+        loadUser();
+    </script>
+</body>
+</html>
